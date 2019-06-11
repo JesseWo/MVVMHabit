@@ -1,12 +1,7 @@
 package me.goldze.mvvmhabit.base;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 
 import com.trello.rxlifecycle2.LifecycleProvider;
 
@@ -14,6 +9,11 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -234,7 +234,7 @@ public class BaseViewModel<M extends BaseModel> extends AndroidViewModel impleme
         }
 
         @Override
-        public void observe(LifecycleOwner owner, Observer observer) {
+        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
             super.observe(owner, observer);
         }
     }
