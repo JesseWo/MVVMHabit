@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -195,48 +194,37 @@ public class BaseViewModel<M extends BaseModel> extends AndroidViewModel impleme
     }
 
     public final class UIChangeLiveData extends SingleLiveEvent {
-        private SingleLiveEvent<String> showDialogEvent;
-        private SingleLiveEvent<Void> dismissDialogEvent;
-        private SingleLiveEvent<Map<String, Object>> startActivityEvent;
-        private SingleLiveEvent<Map<String, Object>> startContainerActivityEvent;
-        private SingleLiveEvent<Void> finishEvent;
-        private SingleLiveEvent<Void> onBackPressedEvent;
+        private SingleLiveEvent<String> showDialogEvent = new SingleLiveEvent<>();
+        private SingleLiveEvent<Void> dismissDialogEvent = new SingleLiveEvent<>();
+        private SingleLiveEvent<Map<String, Object>> startActivityEvent = new SingleLiveEvent<>();
+        private SingleLiveEvent<Map<String, Object>> startContainerActivityEvent = new SingleLiveEvent<>();
+        private SingleLiveEvent<Void> finishEvent = new SingleLiveEvent<>();
+        private SingleLiveEvent<Void> onBackPressedEvent = new SingleLiveEvent<>();
 
         public SingleLiveEvent<String> getShowDialogEvent() {
-            return showDialogEvent = createLiveData(showDialogEvent);
+            return showDialogEvent;
         }
 
         public SingleLiveEvent<Void> getDismissDialogEvent() {
-            return dismissDialogEvent = createLiveData(dismissDialogEvent);
+            return dismissDialogEvent;
         }
 
         public SingleLiveEvent<Map<String, Object>> getStartActivityEvent() {
-            return startActivityEvent = createLiveData(startActivityEvent);
+            return startActivityEvent;
         }
 
         public SingleLiveEvent<Map<String, Object>> getStartContainerActivityEvent() {
-            return startContainerActivityEvent = createLiveData(startContainerActivityEvent);
+            return startContainerActivityEvent;
         }
 
         public SingleLiveEvent<Void> getFinishEvent() {
-            return finishEvent = createLiveData(finishEvent);
+            return finishEvent;
         }
 
         public SingleLiveEvent<Void> getOnBackPressedEvent() {
-            return onBackPressedEvent = createLiveData(onBackPressedEvent);
+            return onBackPressedEvent;
         }
 
-        private SingleLiveEvent createLiveData(SingleLiveEvent liveData) {
-            if (liveData == null) {
-                liveData = new SingleLiveEvent();
-            }
-            return liveData;
-        }
-
-        @Override
-        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
-            super.observe(owner, observer);
-        }
     }
 
     public static final class ParameterField {

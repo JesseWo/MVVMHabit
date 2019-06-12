@@ -2,19 +2,16 @@ package com.goldze.mvvmhabit.ui.main;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import androidx.lifecycle.Observer;
-
 import android.content.pm.ActivityInfo;
-import androidx.databinding.Observable;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 
 import com.goldze.mvvmhabit.BR;
 import com.goldze.mvvmhabit.R;
 import com.goldze.mvvmhabit.databinding.ActivityDemoBinding;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
-import io.reactivex.functions.Consumer;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import me.goldze.mvvmhabit.base.BaseActivity;
 import me.goldze.mvvmhabit.http.DownLoadManager;
 import me.goldze.mvvmhabit.http.download.ProgressCallBack;
@@ -67,14 +64,11 @@ public class DemoActivity extends BaseActivity<ActivityDemoBinding, DemoViewMode
         //请求打开相机权限
         RxPermissions rxPermissions = new RxPermissions(DemoActivity.this);
         rxPermissions.request(Manifest.permission.CAMERA)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (aBoolean) {
-                            ToastUtils.showShort("相机权限已经打开，直接跳入相机");
-                        } else {
-                            ToastUtils.showShort("权限被拒绝");
-                        }
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        ToastUtils.showShort("相机权限已经打开，直接跳入相机");
+                    } else {
+                        ToastUtils.showShort("权限被拒绝");
                     }
                 });
     }

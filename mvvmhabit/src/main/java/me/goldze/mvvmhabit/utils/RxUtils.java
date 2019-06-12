@@ -1,13 +1,12 @@
 package me.goldze.mvvmhabit.utils;
 
 import android.content.Context;
-import androidx.fragment.app.Fragment;
 
 import com.trello.rxlifecycle2.LifecycleProvider;
 import com.trello.rxlifecycle2.LifecycleTransformer;
 
+import androidx.fragment.app.Fragment;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -60,25 +59,15 @@ public class RxUtils {
      * 线程调度器
      */
     public static ObservableTransformer schedulersTransformer() {
-        return new ObservableTransformer() {
-            @Override
-            public ObservableSource apply(Observable upstream) {
-                return upstream.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
+        return upstream -> upstream.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static ObservableTransformer exceptionTransformer() {
 
-        return new ObservableTransformer() {
-            @Override
-            public ObservableSource apply(Observable observable) {
-                return observable
+        return observable -> observable
 //                        .map(new HandleFuc<T>())  //这里可以取出BaseResponse中的Result
-                        .onErrorResumeNext(new HttpResponseFunc());
-            }
-        };
+                .onErrorResumeNext(new HttpResponseFunc());
     }
 
     private static class HttpResponseFunc<T> implements Function<Throwable, Observable<T>> {

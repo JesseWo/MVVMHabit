@@ -1,17 +1,16 @@
 package com.goldze.mvvmhabit.ui.network;
 
 import android.app.Application;
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-import androidx.annotation.NonNull;
 
 import com.goldze.mvvmhabit.BR;
 import com.goldze.mvvmhabit.R;
 import com.goldze.mvvmhabit.data.DemoRepository;
 import com.goldze.mvvmhabit.entity.DemoEntity;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableList;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import me.goldze.mvvmhabit.base.BaseViewModel;
 import me.goldze.mvvmhabit.binding.command.BindingAction;
@@ -98,46 +97,32 @@ public class NetWorkViewModel extends BaseViewModel<DemoRepository> {
                 .compose(RxUtils.bindToLifecycle(getLifecycleProvider())) //请求与View周期同步（过度期，尽量少使用）
                 .compose(RxUtils.schedulersTransformer()) //线程调度
                 .compose(RxUtils.exceptionTransformer()) // 网络错误的异常转换, 这里可以换成自己的ExceptionHandle
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        showDialog("正在请求...");
-                    }
-                })
-                .subscribe(new Consumer<BaseResponse<DemoEntity>>() {
-                    @Override
-                    public void accept(BaseResponse<DemoEntity> response) throws Exception {
-                        //清除列表
-                        observableList.clear();
-                        //请求成功
-                        if (response.getCode() == 1) {
-                            for (DemoEntity.ItemsEntity entity : response.getResult().getItems()) {
-                                NetWorkItemViewModel itemViewModel = new NetWorkItemViewModel(NetWorkViewModel.this, entity);
-                                //双向绑定动态添加Item
-                                observableList.add(itemViewModel);
-                            }
-                        } else {
-                            //code错误时也可以定义Observable回调到View层去处理
-                            ToastUtils.showShort("数据错误");
+                .doOnSubscribe(disposable -> showDialog("正在请求..."))
+                .subscribe((Consumer<BaseResponse<DemoEntity>>) response -> {
+                    //清除列表
+                    observableList.clear();
+                    //请求成功
+                    if (response.getCode() == 1) {
+                        for (DemoEntity.ItemsEntity entity : response.getResult().getItems()) {
+                            NetWorkItemViewModel itemViewModel = new NetWorkItemViewModel(NetWorkViewModel.this, entity);
+                            //双向绑定动态添加Item
+                            observableList.add(itemViewModel);
                         }
+                    } else {
+                        //code错误时也可以定义Observable回调到View层去处理
+                        ToastUtils.showShort("数据错误");
                     }
-                }, new Consumer<ResponseThrowable>() {
-                    @Override
-                    public void accept(ResponseThrowable throwable) throws Exception {
-                        //关闭对话框
-                        dismissDialog();
-                        //请求刷新完成收回
-                        uc.finishRefreshing.call();
-                        ToastUtils.showShort(throwable.message);
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        //关闭对话框
-                        dismissDialog();
-                        //请求刷新完成收回
-                        uc.finishRefreshing.call();
-                    }
+                }, (Consumer<ResponseThrowable>) throwable -> {
+                    //关闭对话框
+                    dismissDialog();
+                    //请求刷新完成收回
+                    uc.finishRefreshing.call();
+                    ToastUtils.showShort(throwable.message);
+                }, () -> {
+                    //关闭对话框
+                    dismissDialog();
+                    //请求刷新完成收回
+                    uc.finishRefreshing.call();
                 });
     }
 

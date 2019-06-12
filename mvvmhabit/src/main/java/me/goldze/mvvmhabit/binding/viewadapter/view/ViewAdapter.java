@@ -14,8 +14,8 @@ import me.goldze.mvvmhabit.binding.command.BindingCommand;
  */
 
 public class ViewAdapter {
-    //防重复点击间隔(秒)
-    public static final int CLICK_INTERVAL = 1;
+    //防重复点击间隔(ms)
+    public static final int CLICK_INTERVAL = 500;
 
     /**
      * requireAll 是意思是是否需要绑定全部参数, false为否
@@ -34,7 +34,7 @@ public class ViewAdapter {
                     });
         } else {
             RxView.clicks(view)
-                    .throttleFirst(CLICK_INTERVAL, TimeUnit.SECONDS)//1秒钟内只允许点击1次
+                    .throttleFirst(CLICK_INTERVAL, TimeUnit.MILLISECONDS)//500ms内只允许点击1次
                     .subscribe(object -> {
                         if (clickCommand != null) {
                             clickCommand.execute();
